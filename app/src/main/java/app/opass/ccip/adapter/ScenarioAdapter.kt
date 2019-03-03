@@ -29,7 +29,7 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ScenarioAdapter(private val mContext: Context, private var mScenarioList: List<Scenario>) :
+class ScenarioAdapter(private val mContext: Context, private var mScenarioList: MutableList<Scenario>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private val SDF = SimpleDateFormat("MM/dd HH:mm")
@@ -127,6 +127,12 @@ class ScenarioAdapter(private val mContext: Context, private var mScenarioList: 
         mContext.startActivity(intent)
     }
 
+    private fun updateList(newList:List<Scenario>){
+        mScenarioList.clear()
+        mScenarioList.addAll(newList)
+        notifyDataSetChanged()
+    }
+
     private fun use(scenario: Scenario) {
         val attendeeCall = CCIPClient.get().use(scenario.id, PreferenceUtil.getToken(mContext))
         attendeeCall.enqueue(object : Callback<Attendee> {
@@ -134,8 +140,7 @@ class ScenarioAdapter(private val mContext: Context, private var mScenarioList: 
                 when {
                     response.isSuccessful -> {
                         val attendee = response.body()
-                        mScenarioList = attendee!!.scenarios
-                        notifyDataSetChanged()
+                        updateList(attendee!!.scenarios)
 
                         if (scenario.countdown > 0) {
                             startCountdownActivity(scenario)

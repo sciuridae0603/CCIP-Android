@@ -177,7 +177,7 @@ class MainFragment : Fragment() {
                         }
                         mActivity.setUserId(attendee.userId)
 
-                        scenarioView.adapter = ScenarioAdapter(mActivity, attendee.scenarios)
+                        scenarioView.adapter = ScenarioAdapter(mActivity, attendee.scenarios.toMutableList())
                     }
                     response.code() == 403 -> {
                         swipeRefreshLayout.isRefreshing = false
